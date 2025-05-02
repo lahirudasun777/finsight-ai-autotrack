@@ -26,7 +26,7 @@ import {
 } from 'lucide-react';
 import TransactionDetails from './TransactionDetails';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
-import { generateMockTransactions } from '@/lib/mockTransactions';
+import { mockTransactions } from '@/lib/mockTransactions';
 
 interface TransactionsListProps {
   filters: {
@@ -44,7 +44,7 @@ const TransactionsList: React.FC<TransactionsListProps> = ({ filters }) => {
   const [privacyMode, setPrivacyMode] = useState(false);
   
   // In a real app, this would be fetched from API based on filters
-  const transactions = generateMockTransactions();
+  const transactions = mockTransactions;
   
   const toggleExpand = (id: string) => {
     if (expandedTransaction === id) {

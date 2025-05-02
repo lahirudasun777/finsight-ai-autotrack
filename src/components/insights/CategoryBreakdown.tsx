@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend } from 'recharts';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { mockCategoryBreakdown, mockCategoryDetails } from '@/lib/mockInsights';
+import { generateMockCategoryData } from '@/lib/mockInsights';
 
 interface CategoryBreakdownProps {
   privacyMode: boolean;
@@ -12,6 +12,32 @@ interface CategoryBreakdownProps {
 }
 
 const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884d8', '#82ca9d'];
+
+// Mock category details for the dialog
+const mockCategoryDetails: Record<string, any[]> = {
+  'Housing': [
+    { merchant: 'Rent Payment', amount: 1200, date: '2023-05-01' },
+    { merchant: 'Utilities', amount: 150, date: '2023-05-05' },
+    { merchant: 'Internet', amount: 75, date: '2023-05-10' }
+  ],
+  'Food': [
+    { merchant: 'Grocery Store', amount: 120, date: '2023-05-03' },
+    { merchant: 'Restaurant', amount: 45, date: '2023-05-12' },
+    { merchant: 'Coffee Shop', amount: 25, date: '2023-05-15' }
+  ],
+  'Transportation': [
+    { merchant: 'Gas Station', amount: 40, date: '2023-05-07' },
+    { merchant: 'Public Transit', amount: 60, date: '2023-05-14' }
+  ],
+  'Entertainment': [
+    { merchant: 'Movie Theatre', amount: 30, date: '2023-05-20' },
+    { merchant: 'Streaming Service', amount: 15, date: '2023-05-25' }
+  ],
+  'Shopping': [
+    { merchant: 'Online Store', amount: 85, date: '2023-05-08' },
+    { merchant: 'Department Store', amount: 110, date: '2023-05-18' }
+  ]
+};
 
 const CustomTooltip = ({ active, payload }: any) => {
   if (active && payload && payload.length) {
@@ -31,17 +57,15 @@ const CategoryBreakdown: React.FC<CategoryBreakdownProps> = ({ privacyMode, time
   const [dialogOpen, setDialogOpen] = useState(false);
 
   // Get data based on the time range
-  const data = mockCategoryBreakdown[timeRange] || mockCategoryBreakdown.month;
+  const data = generateMockCategoryData(timeRange);
 
   const handleCategoryClick = (category: string) => {
     setSelectedCategory(category);
     setDialogOpen(true);
   };
 
-  // Fix for the TS2322 error by making the innerRadius function return a number explicitly
-  const getInnerRadius = ({ activeIndex }: { activeIndex: number }): number => {
-    return activeIndex ? 90 : 100;
-  };
+  // Fix the type issue by providing a number directly rather than a function
+  const innerRadius = 60; // Set a fixed innerRadius
 
   return (
     <>
@@ -59,7 +83,7 @@ const CategoryBreakdown: React.FC<CategoryBreakdownProps> = ({ privacyMode, time
                   cy="50%"
                   labelLine={false}
                   outerRadius={90}
-                  innerRadius={getInnerRadius}
+                  innerRadius={innerRadius}
                   fill="#8884d8"
                   dataKey={privacyMode ? "value" : "value"}
                   nameKey="name"

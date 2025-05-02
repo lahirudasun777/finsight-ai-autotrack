@@ -1,6 +1,64 @@
 
 import { faker } from '@faker-js/faker';
 
+// Generate category spending breakdown
+export const generateMockCategoryData = (timeRange: string) => {
+  // Define categories and their relative weights
+  const categories = [
+    { name: 'Housing', weight: 30 },
+    { name: 'Food', weight: 15 },
+    { name: 'Transportation', weight: 10 },
+    { name: 'Entertainment', weight: 8 },
+    { name: 'Shopping', weight: 12 },
+    { name: 'Health', weight: 7 },
+    { name: 'Utilities', weight: 10 },
+    { name: 'Subscriptions', weight: 8 }
+  ];
+  
+  // Base expenses differ by time range
+  let baseExpenses;
+  switch(timeRange) {
+    case 'week':
+      baseExpenses = 800;
+      break;
+    case 'month':
+      baseExpenses = 3200;
+      break;
+    case 'quarter':
+      baseExpenses = 9600;
+      break;
+    case 'year':
+      baseExpenses = 38400;
+      break;
+    default:
+      baseExpenses = 3200; // Default to month
+  }
+  
+  // Calculate total weights
+  const totalWeight = categories.reduce((sum, cat) => sum + cat.weight, 0);
+  
+  // Generate data
+  const data = categories.map(category => {
+    // Calculate base value from weight
+    const baseValue = (category.weight / totalWeight) * baseExpenses;
+    
+    // Add some randomness (±10%)
+    const randomFactor = 0.9 + Math.random() * 0.2;
+    const value = baseValue * randomFactor;
+    
+    // Calculate percentage
+    const percentage = ((value / baseExpenses) * 100).toFixed(1);
+    
+    return {
+      name: category.name,
+      value: Math.round(value * 100) / 100, // Round to 2 decimal places
+      percentage
+    };
+  });
+  
+  return data;
+};
+
 // Generate overview data with income, expenses, and predicted balance
 export const generateMockOverviewData = (timeRange: string) => {
   // Base values that will be adjusted based on time range
@@ -43,48 +101,6 @@ export const generateMockOverviewData = (timeRange: string) => {
     expensesChange,
     balanceChange
   };
-};
-
-// Generate category spending breakdown
-export const generateMockCategoryData = (timeRange: string) => {
-  // Define categories and their relative weights
-  const categories = [
-    { name: 'Housing', weight: 30 },
-    { name: 'Food', weight: 15 },
-    { name: 'Transportation', weight: 10 },
-    { name: 'Entertainment', weight: 8 },
-    { name: 'Shopping', weight: 12 },
-    { name: 'Health', weight: 7 },
-    { name: 'Utilities', weight: 10 },
-    { name: 'Subscriptions', weight: 8 }
-  ];
-  
-  // Get base expenses from overview
-  const { expenses } = generateMockOverviewData(timeRange);
-  
-  // Calculate total weights
-  const totalWeight = categories.reduce((sum, cat) => sum + cat.weight, 0);
-  
-  // Generate data
-  const data = categories.map(category => {
-    // Calculate base value from weight
-    const baseValue = (category.weight / totalWeight) * expenses;
-    
-    // Add some randomness (±10%)
-    const randomFactor = 0.9 + Math.random() * 0.2;
-    const value = baseValue * randomFactor;
-    
-    // Calculate percentage
-    const percentage = ((value / expenses) * 100).toFixed(1);
-    
-    return {
-      name: category.name,
-      value: Math.round(value * 100) / 100, // Round to 2 decimal places
-      percentage
-    };
-  });
-  
-  return data;
 };
 
 // Generate AI insights
