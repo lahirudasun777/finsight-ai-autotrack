@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { CalendarArrowUp, Wallet, ChartBar, Dollar, FileText, Save, Calendar } from 'lucide-react';
+import { CalendarArrowUp, Wallet, ChartBar, DollarSign, FileText, Save, Calendar } from 'lucide-react';
 
 const features = [
   {
@@ -19,7 +19,7 @@ const features = [
     description: "Weekly/monthly spending summaries via simple visuals and clear recommendations."
   },
   {
-    icon: <Dollar className="h-10 w-10 text-finsight-secondary" />,
+    icon: <DollarSign className="h-10 w-10 text-finsight-secondary" />,
     title: "Predictive Insights",
     description: "AI forecasts future expenses, suggests savings goals, and warns about dangerous trends."
   },
