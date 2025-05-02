@@ -129,9 +129,9 @@ export const generateMockTransactions = (): MockTransaction[] => {
   // Generate current month transactions
   const now = new Date();
   for (let i = 0; i < currentMonthCount; i++) {
-    const date = faker.date.between({
-      from: new Date(now.getFullYear(), now.getMonth(), 1),
-      to: now
+    const date = faker.date.between({ 
+      from: new Date(now.getFullYear(), now.getMonth(), 1), 
+      to: now 
     });
     transactions.push(generateTransaction(date));
   }
