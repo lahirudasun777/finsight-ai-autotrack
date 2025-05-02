@@ -129,27 +129,27 @@ export const generateMockTransactions = (): MockTransaction[] => {
   // Generate current month transactions
   const now = new Date();
   for (let i = 0; i < currentMonthCount; i++) {
-    const date = faker.date.between({ 
-      from: new Date(now.getFullYear(), now.getMonth(), 1), 
-      to: now 
+    const date = faker.date.between({
+      from: new Date(now.getFullYear(), now.getMonth(), 1),
+      to: now
     });
     transactions.push(generateTransaction(date));
   }
   
   // Generate previous month transactions
   for (let i = 0; i < prevMonthCount; i++) {
-    const date = faker.date.between({ 
-      from: new Date(now.getFullYear(), now.getMonth() - 1, 1), 
-      to: new Date(now.getFullYear(), now.getMonth(), 0) 
+    const date = faker.date.between({
+      from: new Date(now.getFullYear(), now.getMonth() - 1, 1),
+      to: new Date(now.getFullYear(), now.getMonth(), 0)
     });
     transactions.push(generateTransaction(date));
   }
   
   // Generate transactions from two months ago
   for (let i = 0; i < twoMonthsAgoCount; i++) {
-    const date = faker.date.between({ 
-      from: new Date(now.getFullYear(), now.getMonth() - 2, 1), 
-      to: new Date(now.getFullYear(), now.getMonth() - 1, 0) 
+    const date = faker.date.between({
+      from: new Date(now.getFullYear(), now.getMonth() - 2, 1),
+      to: new Date(now.getFullYear(), now.getMonth() - 1, 0)
     });
     transactions.push(generateTransaction(date));
   }

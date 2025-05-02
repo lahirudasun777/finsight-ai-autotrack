@@ -2,6 +2,7 @@
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { Checkbox } from '@/components/ui/checkbox';
 import {
   Form,
   FormField,
@@ -15,6 +16,7 @@ import { Edit, Save, Paperclip, Calendar, Lightbulb } from 'lucide-react';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import { useForm } from 'react-hook-form';
 
 interface TransactionDetailsProps {
   transaction: any;
@@ -24,12 +26,25 @@ const TransactionDetails: React.FC<TransactionDetailsProps> = ({ transaction }) 
   const [editMode, setEditMode] = useState(false);
   const [showOriginalMessage, setShowOriginalMessage] = useState(false);
   
+  // Create a form instance for editing transaction details
+  const form = useForm({
+    defaultValues: {
+      merchantName: transaction.merchantName,
+      category: transaction.category,
+      amount: transaction.amount.toString(),
+      date: transaction.date,
+      description: transaction.description,
+      isRecurring: transaction.isRecurring,
+    }
+  });
+
   const handleEdit = () => {
     setEditMode(!editMode);
   };
   
   const handleSave = () => {
-    console.log('Saving transaction updates');
+    const values = form.getValues();
+    console.log('Saving transaction updates', values);
     setEditMode(false);
   };
   
@@ -62,39 +77,42 @@ const TransactionDetails: React.FC<TransactionDetailsProps> = ({ transaction }) 
         
         {editMode ? (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <Form>
+            <Form {...form}>
               <div className="space-y-4">
                 <FormField
+                  control={form.control}
                   name="merchantName"
-                  render={() => (
+                  render={({ field }) => (
                     <FormItem>
                       <FormLabel>Merchant</FormLabel>
                       <FormControl>
-                        <Input defaultValue={transaction.merchantName} />
+                        <Input {...field} />
                       </FormControl>
                     </FormItem>
                   )}
                 />
                 
                 <FormField
+                  control={form.control}
                   name="category"
-                  render={() => (
+                  render={({ field }) => (
                     <FormItem>
                       <FormLabel>Category</FormLabel>
                       <FormControl>
-                        <Input defaultValue={transaction.category} />
+                        <Input {...field} />
                       </FormControl>
                     </FormItem>
                   )}
                 />
                 
                 <FormField
+                  control={form.control}
                   name="amount"
-                  render={() => (
+                  render={({ field }) => (
                     <FormItem>
                       <FormLabel>Amount</FormLabel>
                       <FormControl>
-                        <Input defaultValue={transaction.amount.toString()} />
+                        <Input {...field} />
                       </FormControl>
                     </FormItem>
                   )}
@@ -102,41 +120,43 @@ const TransactionDetails: React.FC<TransactionDetailsProps> = ({ transaction }) 
               </div>
             </Form>
             
-            <Form>
+            <Form {...form}>
               <div className="space-y-4">
                 <FormField
+                  control={form.control}
                   name="date"
-                  render={() => (
+                  render={({ field }) => (
                     <FormItem>
                       <FormLabel>Date</FormLabel>
                       <FormControl>
-                        <Input defaultValue={transaction.date} />
+                        <Input {...field} />
                       </FormControl>
                     </FormItem>
                   )}
                 />
                 
                 <FormField
+                  control={form.control}
                   name="description"
-                  render={() => (
+                  render={({ field }) => (
                     <FormItem>
                       <FormLabel>Description</FormLabel>
                       <FormControl>
-                        <Input defaultValue={transaction.description} />
+                        <Input {...field} />
                       </FormControl>
                     </FormItem>
                   )}
                 />
                 
                 <FormField
+                  control={form.control}
                   name="isRecurring"
-                  render={() => (
+                  render={({ field }) => (
                     <FormItem className="flex flex-row items-center space-x-3 space-y-0">
                       <FormControl>
-                        <input
-                          type="checkbox"
-                          defaultChecked={transaction.isRecurring}
-                          className="h-4 w-4 rounded border-gray-300"
+                        <Checkbox 
+                          checked={field.value} 
+                          onCheckedChange={field.onChange}
                         />
                       </FormControl>
                       <FormLabel>Mark as recurring transaction</FormLabel>
