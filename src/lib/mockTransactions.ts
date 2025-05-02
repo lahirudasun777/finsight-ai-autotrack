@@ -1,161 +1,57 @@
-
 import { faker } from '@faker-js/faker';
 
-// Define transaction categories
-const categories = [
-  'Food & Dining', 
-  'Transportation', 
-  'Shopping', 
-  'Entertainment', 
-  'Bills & Utilities', 
-  'Subscriptions', 
-  'Travel', 
-  'Health', 
-  'Income'
-];
-
-// Define merchants by category
-const merchantsByCategory: Record<string, string[]> = {
-  'Food & Dining': ['Starbucks', 'McDonald\'s', 'Chipotle', 'Uber Eats', 'Whole Foods', 'Local Restaurant'],
-  'Transportation': ['Uber', 'Lyft', 'Shell', 'Chevron', 'Public Transit', 'Parking Fee'],
-  'Shopping': ['Amazon', 'Target', 'Walmart', 'Best Buy', 'Apple Store', 'Nike'],
-  'Entertainment': ['Netflix', 'Spotify', 'AMC Theaters', 'GameStop', 'Steam', 'Disney+'],
-  'Bills & Utilities': ['AT&T', 'Verizon', 'Comcast', 'PG&E', 'Water Bill', 'Electricity Provider'],
-  'Subscriptions': ['Adobe', 'Microsoft', 'Amazon Prime', 'YouTube Premium', 'Gym Membership', 'New York Times'],
-  'Travel': ['Airbnb', 'Marriott', 'United Airlines', 'Expedia', 'Hertz', 'American Airlines'],
-  'Health': ['CVS', 'Walgreens', 'Fitness App', 'Doctor Visit', 'Pharmacy', 'Dental Care'],
-  'Income': ['Salary Deposit', 'Freelance Payment', 'Investment Return', 'Venmo Transfer', 'Tax Refund', 'Bonus']
-};
-
-// Define source types
-const sourceTypes = ['bank', 'email', 'sms', 'manual'];
-
-// Define recurring items
-const recurringItems = [
-  'Netflix',
-  'Spotify',
-  'Gym Membership',
-  'Adobe',
-  'Microsoft',
-  'Amazon Prime',
-  'YouTube Premium',
-  'Internet Provider',
-  'Phone Bill',
-  'Insurance'
-];
-
-interface MockTransaction {
+interface Transaction {
   id: string;
-  merchantName: string;
-  amount: number;
   date: string;
-  category: string;
   description: string;
-  isRecurring: boolean;
-  hasReceipt: boolean;
+  amount: number;
+  category: string;
   source: string;
-  originalMessage?: string;
-  aiInsight?: string;
 }
 
-// Generate a mock transaction
-const generateTransaction = (date?: Date): MockTransaction => {
-  // Select a random category
-  const category = faker.helpers.arrayElement(categories);
-  
-  // Select a merchant for that category
-  const merchantName = faker.helpers.arrayElement(merchantsByCategory[category]);
-  
-  // Determine if it's recurring
-  const isRecurring = recurringItems.some(item => merchantName.toLowerCase().includes(item.toLowerCase()));
-  
-  // Generate amount based on category (Income is positive, others are negative)
-  let amount: number;
-  if (category === 'Income') {
-    amount = parseFloat(faker.finance.amount(500, 5000, 2));
-  } else {
-    amount = -parseFloat(faker.finance.amount(5, 500, 2));
-  }
-  
-  // Generate transaction date
-  const transactionDate = date || faker.date.recent({ days: 60 });
-  
-  // Generate AI insight for some transactions
-  let aiInsight;
-  if (faker.datatype.boolean(0.3)) {
-    const insights = [
-      `This is ${isRecurring ? 'a recurring payment' : 'higher than your usual spending'} at ${merchantName}.`,
-      `You've spent ${Math.abs(amount) > 100 ? 'significantly more' : 'about the same'} compared to last month in this category.`,
-      `This merchant has increased their price by ${faker.number.int({ min: 5, max: 25 })}% since your last visit.`,
-      `This is your ${faker.number.int({ min: 2, max: 5 })}th transaction at ${merchantName} this month.`,
-      `Based on your spending patterns, you might want to consider setting a budget for ${category.toLowerCase()}.`
-    ];
-    aiInsight = faker.helpers.arrayElement(insights);
-  }
-  
+const generateTransaction = (): Transaction => {
+  const amount = faker.number.float({ min: 5, max: 1000, precision: 2 });
+  const type = faker.helpers.arrayElement(['income', 'expense']);
+  const actualAmount = type === 'expense' ? -amount : amount;
+  const date = faker.date.between({ from: '2023-01-01', to: '2023-12-31' });
+
   return {
     id: faker.string.uuid(),
-    merchantName,
-    amount,
-    date: transactionDate.toISOString(),
-    category,
-    description: faker.helpers.arrayElement([
-      `Purchase at ${merchantName}`, 
-      `Payment to ${merchantName}`,
-      `${category} expense`,
-      `${isRecurring ? 'Monthly' : 'One-time'} ${category.toLowerCase()} payment`,
-      `${merchantName} - ${faker.location.city()}`
-    ]),
-    isRecurring,
-    hasReceipt: faker.datatype.boolean(0.3),
-    source: faker.helpers.arrayElement(sourceTypes),
-    aiInsight
+    date: faker.date.toLocaleDateString(date),
+    description: faker.commerce.productName(),
+    amount: actualAmount,
+    category: faker.commerce.department(),
+    source: faker.company.name(),
   };
 };
 
-// Generate transactions for the past few months, with more recent dates having more transactions
-export const generateMockTransactions = (): MockTransaction[] => {
-  const transactions: MockTransaction[] = [];
-  
-  // Current month: 30-45 transactions
-  const currentMonthCount = faker.number.int({ min: 30, max: 45 });
-  
-  // Previous month: 25-40 transactions
-  const prevMonthCount = faker.number.int({ min: 25, max: 40 });
-  
-  // Two months ago: 15-30 transactions
-  const twoMonthsAgoCount = faker.number.int({ min: 15, max: 30 });
-  
-  // Generate current month transactions
-  const now = new Date();
-  for (let i = 0; i < currentMonthCount; i++) {
-    const date = faker.date.between({ 
-      from: new Date(now.getFullYear(), now.getMonth(), 1), 
-      to: now 
-    });
-    transactions.push(generateTransaction(date));
-  }
-  
-  // Generate previous month transactions
-  for (let i = 0; i < prevMonthCount; i++) {
-    const date = faker.date.between({
-      from: new Date(now.getFullYear(), now.getMonth() - 1, 1),
-      to: new Date(now.getFullYear(), now.getMonth(), 0)
-    });
-    transactions.push(generateTransaction(date));
-  }
-  
-  // Generate transactions from two months ago
-  for (let i = 0; i < twoMonthsAgoCount; i++) {
-    const date = faker.date.between({
-      from: new Date(now.getFullYear(), now.getMonth() - 2, 1),
-      to: new Date(now.getFullYear(), now.getMonth() - 1, 0)
-    });
-    transactions.push(generateTransaction(date));
-  }
-  
-  // Sort transactions by date, newest first
-  transactions.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
-  
-  return transactions;
+export const mockTransactions = Array.from({ length: 50 }, () => generateTransaction());
+
+// Mock data for insights
+export const mockInsightsData = {
+  totalIncome: faker.number.float({ min: 5000, max: 10000, precision: 2 }),
+  totalExpenses: faker.number.float({ min: 3000, max: 8000, precision: 2 }),
+  netBalance: faker.number.float({ min: -2000, max: 5000, precision: 2 }),
+  incomeByCategory: [
+    { category: 'Salary', amount: faker.number.float({ min: 3000, max: 6000, precision: 2 }) },
+    { category: 'Investments', amount: faker.number.float({ min: 1000, max: 3000, precision: 2 }) },
+    { category: 'Other', amount: faker.number.float({ min: 500, max: 1500, precision: 2 }) },
+  ],
+  expensesByCategory: [
+    { category: 'Housing', amount: faker.number.float({ min: 1000, max: 2500, precision: 2 }) },
+    { category: 'Food', amount: faker.number.float({ min: 500, max: 1500, precision: 2 }) },
+    { category: 'Transportation', amount: faker.number.float({ min: 300, max: 800, precision: 2 }) },
+    { category: 'Entertainment', amount: faker.number.float({ min: 200, max: 600, precision: 2 }) },
+    { category: 'Other', amount: faker.number.float({ min: 300, max: 1000, precision: 2 }) },
+  ],
+  recurringExpenses: [
+    { name: 'Rent', amount: faker.number.float({ min: 1000, max: 2500, precision: 2 }), dueDate: faker.date.future() },
+    { name: 'Internet', amount: faker.number.float({ min: 50, max: 150, precision: 2 }), dueDate: faker.date.future() },
+    { name: 'Subscription', amount: faker.number.float({ min: 20, max: 100, precision: 2 }), dueDate: faker.date.future() },
+  ],
+  largestExpenses: Array.from({ length: 5 }, () => ({
+    name: faker.commerce.productName(),
+    amount: faker.number.float({ min: 100, max: 500, precision: 2 }),
+    date: faker.date.toLocaleDateString(faker.date.between({ from: '2023-01-01', to: '2023-12-31' })),
+  })),
 };

@@ -2,147 +2,122 @@
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend } from 'recharts';
-import { cn } from '@/lib/utils';
-import { generateMockCategoryData } from '@/lib/mockInsights';
-import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart";
-import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { mockCategoryBreakdown, mockCategoryDetails } from '@/lib/mockInsights';
 
 interface CategoryBreakdownProps {
   privacyMode: boolean;
   timeRange: string;
 }
 
-const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884d8', '#82ca9d', '#ffc658', '#8dd1e1'];
+const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884d8', '#82ca9d'];
 
-const CategoryBreakdown: React.FC<CategoryBreakdownProps> = ({
-  privacyMode,
-  timeRange
-}) => {
-  const categoryData = generateMockCategoryData(timeRange);
-  const [activeIndex, setActiveIndex] = useState<number | null>(null);
-  
-  const handlePieEnter = (_: any, index: number) => {
-    setActiveIndex(index);
-  };
-
-  const handlePieLeave = () => {
-    setActiveIndex(null);
-  };
-  
-  const config = {
-    primary: { theme: { light: "#333", dark: "#fff" } },
-    secondary: { theme: { light: "#666", dark: "#aaa" } },
-  };
-
-  return (
-    <Card className="h-full">
-      <CardHeader className="pb-2">
-        <CardTitle className="text-lg font-semibold">Category Breakdown</CardTitle>
-      </CardHeader>
-      <CardContent>
-        <div className="h-[300px] sm:h-[400px] flex flex-col sm:flex-row">
-          <div className="relative h-full w-full">
-            <ChartContainer 
-              config={config} 
-              className="h-full w-full -ml-6"
-            >
-              <PieChart 
-                margin={{ top: 0, right: 0, bottom: 0, left: 0 }}
-              >
-                <Pie
-                  data={categoryData}
-                  dataKey="value"
-                  nameKey="name"
-                  cx="50%"
-                  cy="50%"
-                  outerRadius={({ activeIndex }) => activeIndex === activeIndex ? 100 : 90}
-                  innerRadius={60}
-                  fill="#8884d8"
-                  paddingAngle={2}
-                  onMouseEnter={handlePieEnter}
-                  onMouseLeave={handlePieLeave}
-                >
-                  {categoryData.map((entry, index) => (
-                    <Cell 
-                      key={`cell-${index}`} 
-                      fill={COLORS[index % COLORS.length]} 
-                    />
-                  ))}
-                </Pie>
-                <ChartTooltip 
-                  content={<CustomTooltip privacyMode={privacyMode} />} 
-                />
-              </PieChart>
-            </ChartContainer>
-          </div>
-
-          <div className="mt-4 sm:mt-0 sm:ml-6 flex flex-col justify-center">
-            <div className="space-y-2">
-              {categoryData.map((entry, index) => (
-                <div key={index} className="flex items-center justify-between">
-                  <div className="flex items-center">
-                    <div
-                      className="w-3 h-3 rounded-full mr-2"
-                      style={{ backgroundColor: COLORS[index % COLORS.length] }}
-                    />
-                    <span className="text-sm">{entry.name}</span>
-                  </div>
-                  <span className={cn(
-                    "text-sm font-medium",
-                    privacyMode ? "blur-sm hover:blur-none transition-all" : ""
-                  )}>
-                    ${entry.value.toFixed(2)}
-                  </span>
-                </div>
-              ))}
-            </div>
-
-            <div className="mt-6">
-              <div className="text-sm font-medium">Top Categories:</div>
-              <div className="flex flex-wrap gap-2 mt-2">
-                {categoryData
-                  .sort((a, b) => b.value - a.value)
-                  .slice(0, 3)
-                  .map((category, index) => (
-                    <Badge key={index} variant="secondary">
-                      {category.name}
-                    </Badge>
-                  ))
-                }
-              </div>
-            </div>
-          </div>
-        </div>
-      </CardContent>
-    </Card>
-  );
-};
-
-interface CustomTooltipProps {
-  active?: boolean;
-  payload?: any[];
-  privacyMode: boolean;
-}
-
-const CustomTooltip: React.FC<CustomTooltipProps> = ({ active, payload, privacyMode }) => {
+const CustomTooltip = ({ active, payload }: any) => {
   if (active && payload && payload.length) {
     return (
-      <div className="bg-background border border-border rounded-lg p-3 shadow-md">
+      <div className="bg-white p-2 border rounded shadow text-xs">
         <p className="font-medium">{payload[0].name}</p>
-        <p className={cn(
-          "text-sm font-semibold",
-          privacyMode ? "blur-sm hover:blur-none transition-all" : ""
-        )}>
-          ${payload[0].value.toFixed(2)}
-        </p>
-        <p className="text-xs text-muted-foreground">
-          {payload[0].payload.percentage}% of total
-        </p>
+        <p className="text-finsight-primary">${payload[0].value.toFixed(2)}</p>
+        <p className="text-gray-500">{payload[0].payload.percentage}%</p>
       </div>
     );
   }
-
   return null;
+};
+
+const CategoryBreakdown: React.FC<CategoryBreakdownProps> = ({ privacyMode, timeRange }) => {
+  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+  const [dialogOpen, setDialogOpen] = useState(false);
+
+  // Get data based on the time range
+  const data = mockCategoryBreakdown[timeRange] || mockCategoryBreakdown.month;
+
+  const handleCategoryClick = (category: string) => {
+    setSelectedCategory(category);
+    setDialogOpen(true);
+  };
+
+  // Fix for the TS2322 error by making the innerRadius function return a number explicitly
+  const getInnerRadius = ({ activeIndex }: { activeIndex: number }): number => {
+    return activeIndex ? 90 : 100;
+  };
+
+  return (
+    <>
+      <Card className="h-full">
+        <CardHeader>
+          <CardTitle className="text-xl font-semibold">Spending by Category</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="h-[300px]">
+            <ResponsiveContainer width="100%" height="100%">
+              <PieChart>
+                <Pie
+                  data={data}
+                  cx="50%"
+                  cy="50%"
+                  labelLine={false}
+                  outerRadius={90}
+                  innerRadius={getInnerRadius}
+                  fill="#8884d8"
+                  dataKey={privacyMode ? "value" : "value"}
+                  nameKey="name"
+                  onClick={(entry) => handleCategoryClick(entry.name)}
+                  className="cursor-pointer"
+                >
+                  {data.map((entry: any, index: number) => (
+                    <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                  ))}
+                </Pie>
+                <Tooltip content={<CustomTooltip />} />
+                <Legend 
+                  layout="horizontal" 
+                  verticalAlign="bottom" 
+                  align="center"
+                  formatter={(value, entry) => (
+                    <span className="text-xs">{value}</span>
+                  )}
+                />
+              </PieChart>
+            </ResponsiveContainer>
+          </div>
+          
+          <div className="mt-4 text-center text-xs text-gray-500">
+            Click on a category to see detailed breakdown
+          </div>
+        </CardContent>
+      </Card>
+      
+      <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
+        <DialogContent className="sm:max-w-[425px]">
+          <DialogHeader>
+            <DialogTitle>{selectedCategory} Details</DialogTitle>
+          </DialogHeader>
+          
+          {selectedCategory && mockCategoryDetails[selectedCategory] && (
+            <div className="space-y-4 mt-2">
+              {mockCategoryDetails[selectedCategory].map((item, index) => (
+                <div key={index} className="flex items-center justify-between border-b pb-2">
+                  <div>
+                    <p className="font-medium">{item.merchant}</p>
+                    <p className="text-xs text-gray-500">{item.date}</p>
+                  </div>
+                  <p className={`font-medium ${privacyMode ? 'blur-sm' : ''}`}>${item.amount.toFixed(2)}</p>
+                </div>
+              ))}
+              
+              <div className="flex justify-end pt-2">
+                <Button onClick={() => setDialogOpen(false)} variant="outline">
+                  Close
+                </Button>
+              </div>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
+    </>
+  );
 };
 
 export default CategoryBreakdown;
