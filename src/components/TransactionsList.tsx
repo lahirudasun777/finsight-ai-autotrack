@@ -232,16 +232,18 @@ const TransactionsList: React.FC<TransactionsListProps> = ({ filters }) => {
                             </div>
                           </TableCell>
                           <TableCell className="w-10">
-                            <CollapsibleTrigger 
+                            <Button 
+                              variant="ghost" 
+                              size="sm" 
                               onClick={() => toggleExpand(transaction.id)}
-                              className="focus:outline-none"
+                              className="p-0 h-auto"
                             >
                               {expandedTransaction === transaction.id ? (
                                 <ChevronUp className="h-5 w-5 text-gray-500" />
                               ) : (
                                 <ChevronDown className="h-5 w-5 text-gray-500" />
                               )}
-                            </CollapsibleTrigger>
+                            </Button>
                           </TableCell>
                         </TableRow>
                         <Collapsible open={expandedTransaction === transaction.id}>
