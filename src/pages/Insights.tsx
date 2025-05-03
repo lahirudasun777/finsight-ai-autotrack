@@ -34,7 +34,7 @@ const Insights = () => {
       <main className="flex-1 container px-4 py-8 mx-auto">
         <div className="mb-6 flex flex-col md:flex-row md:items-center md:justify-between">
           <div>
-            <h1 className="text-3xl font-bold text-finsight-primary">Insights</h1>
+            <h1 className="text-3xl font-bold text-finthory-primary">Insights</h1>
             <p className="text-gray-500 dark:text-gray-400 mt-1">
               AI-powered analytics for your financial health
             </p>
