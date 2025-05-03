@@ -15,6 +15,7 @@ import Transactions from "./pages/Transactions";
 import Insights from "./pages/Insights";
 import Settings from "./pages/Settings";
 import Privacy from "./pages/Privacy";
+import Terms from "./pages/Terms";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -32,6 +33,7 @@ const App = () => (
             <Route path="/register" element={<Register />} />
             <Route path="/forgot-password" element={<ForgotPassword />} />
             <Route path="/privacy" element={<Privacy />} />
+            <Route path="/terms" element={<Terms />} />
             
             {/* Protected routes */}
             <Route path="/dashboard" element={
