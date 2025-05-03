@@ -15,9 +15,9 @@ const Dashboard = () => {
           <div className="flex flex-col md:flex-row justify-between items-start gap-6 mb-6">
             <div>
               <h1 className="text-3xl font-bold tracking-tight">Dashboard</h1>
-              <p className="text-gray-500 mt-1">Welcome to your FinSight dashboard!</p>
+              <p className="text-gray-500 mt-1">Welcome to your Finthory dashboard!</p>
             </div>
-            <Button className="bg-finsight-secondary hover:bg-finsight-secondary/90">
+            <Button className="bg-finthory-secondary hover:bg-finthory-secondary/90">
               Connect Account
             </Button>
           </div>
@@ -26,7 +26,7 @@ const Dashboard = () => {
             <Card>
               <CardHeader className="flex flex-row items-center justify-between pb-2">
                 <CardTitle className="text-sm font-medium text-gray-500">Total Balance</CardTitle>
-                <Wallet className="h-4 w-4 text-finsight-primary" />
+                <Wallet className="h-4 w-4 text-finthory-primary" />
               </CardHeader>
               <CardContent>
                 <div className="text-2xl font-bold">$12,580.35</div>
@@ -36,7 +36,7 @@ const Dashboard = () => {
             <Card>
               <CardHeader className="flex flex-row items-center justify-between pb-2">
                 <CardTitle className="text-sm font-medium text-gray-500">Monthly Spending</CardTitle>
-                <ChartBar className="h-4 w-4 text-finsight-primary" />
+                <ChartBar className="h-4 w-4 text-finthory-primary" />
               </CardHeader>
               <CardContent>
                 <div className="text-2xl font-bold">$3,240.80</div>
@@ -46,7 +46,7 @@ const Dashboard = () => {
             <Card>
               <CardHeader className="flex flex-row items-center justify-between pb-2">
                 <CardTitle className="text-sm font-medium text-gray-500">Upcoming Bills</CardTitle>
-                <Calendar className="h-4 w-4 text-finsight-primary" />
+                <Calendar className="h-4 w-4 text-finthory-primary" />
               </CardHeader>
               <CardContent>
                 <div className="text-2xl font-bold">$580.00</div>
@@ -58,27 +58,27 @@ const Dashboard = () => {
           <div className="grid gap-6 grid-cols-1 lg:grid-cols-2 mb-6">
             <Card className="col-span-1 lg:col-span-2">
               <CardHeader>
-                <CardTitle>Get Started with FinSight</CardTitle>
+                <CardTitle>Get Started with Finthory</CardTitle>
                 <CardDescription>Complete these steps to set up your account</CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
                   <div className="flex items-center space-x-4">
-                    <div className="bg-finsight-light dark:bg-finsight-primary/20 rounded-full p-2">
-                      <span className="flex h-6 w-6 items-center justify-center rounded-full bg-finsight-primary text-white">
+                    <div className="bg-finthory-light dark:bg-finthory-primary/20 rounded-full p-2">
+                      <span className="flex h-6 w-6 items-center justify-center rounded-full bg-finthory-primary text-white">
                         1
                       </span>
                     </div>
                     <div className="flex-1">
                       <h3 className="text-lg font-medium">Connect your email account</h3>
-                      <p className="text-gray-500">Allow FinSight to securely read your financial emails</p>
+                      <p className="text-gray-500">Allow Finthory to securely read your financial emails</p>
                     </div>
                     <Button>Connect</Button>
                   </div>
                   
                   <div className="flex items-center space-x-4">
-                    <div className="bg-finsight-light dark:bg-finsight-primary/20 rounded-full p-2">
-                      <span className="flex h-6 w-6 items-center justify-center rounded-full bg-finsight-primary text-white">
+                    <div className="bg-finthory-light dark:bg-finthory-primary/20 rounded-full p-2">
+                      <span className="flex h-6 w-6 items-center justify-center rounded-full bg-finthory-primary text-white">
                         2
                       </span>
                     </div>
@@ -90,8 +90,8 @@ const Dashboard = () => {
                   </div>
                   
                   <div className="flex items-center space-x-4">
-                    <div className="bg-finsight-light dark:bg-finsight-primary/20 rounded-full p-2">
-                      <span className="flex h-6 w-6 items-center justify-center rounded-full bg-finsight-primary text-white">
+                    <div className="bg-finthory-light dark:bg-finthory-primary/20 rounded-full p-2">
+                      <span className="flex h-6 w-6 items-center justify-center rounded-full bg-finthory-primary text-white">
                         3
                       </span>
                     </div>

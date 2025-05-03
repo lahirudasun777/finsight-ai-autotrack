@@ -39,21 +39,21 @@ const Navbar: React.FC = () => {
     <header className="sticky top-0 z-50 w-full bg-white/75 backdrop-blur-md border-b">
       <div className="container flex h-16 items-center justify-between">
         <Link to="/" className="flex items-center gap-2">
-          <Wallet className="h-6 w-6 text-finsight-primary" />
-          <span className="text-xl font-bold text-finsight-primary">FinSight</span>
+          <Wallet className="h-6 w-6 text-finthory-primary" />
+          <span className="text-xl font-bold text-finthory-primary">Finthory</span>
         </Link>
         
         <nav className="hidden md:flex items-center gap-6">
-          <Link to="/dashboard" className="text-sm font-medium hover:text-finsight-secondary transition-colors">
+          <Link to="/dashboard" className="text-sm font-medium hover:text-finthory-secondary transition-colors">
             Dashboard
           </Link>
-          <Link to="/transactions" className="text-sm font-medium hover:text-finsight-secondary transition-colors">
+          <Link to="/transactions" className="text-sm font-medium hover:text-finthory-secondary transition-colors">
             Transactions
           </Link>
-          <Link to="/insights" className="text-sm font-medium hover:text-finsight-secondary transition-colors">
+          <Link to="/insights" className="text-sm font-medium hover:text-finthory-secondary transition-colors">
             Insights
           </Link>
-          <Link to="/settings" className="text-sm font-medium hover:text-finsight-secondary transition-colors">
+          <Link to="/settings" className="text-sm font-medium hover:text-finthory-secondary transition-colors">
             Settings
           </Link>
         </nav>
@@ -64,7 +64,7 @@ const Navbar: React.FC = () => {
               <DropdownMenuTrigger asChild>
                 <Button variant="ghost" className="relative rounded-full h-8 w-8 p-0">
                   <Avatar className="h-8 w-8">
-                    <AvatarFallback className="bg-finsight-primary text-white">
+                    <AvatarFallback className="bg-finthory-primary text-white">
                       {getUserInitials()}
                     </AvatarFallback>
                   </Avatar>
