@@ -47,10 +47,15 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const login = async (email: string, password: string, remember = false): Promise<boolean> => {
     setIsLoading(true);
     try {
-      // For demo, we'll just use a simple check
-      // In a real app, this would be an API call
-      if (email === 'demo@finsight.com' && password === 'password123') {
-        const userData = { email, name: 'Demo User' };
+      // Check for both the demo credentials and the new "user/123" credentials
+      if ((email === 'demo@finsight.com' && password === 'password123') || 
+          (email === 'user' && password === '123')) {
+        
+        // Set the appropriate user data based on which credential was used
+        const userData = email === 'user' 
+          ? { email: 'user', name: 'Regular User' }
+          : { email, name: 'Demo User' };
+        
         setUser(userData);
         
         // Save to localStorage if remember me is checked

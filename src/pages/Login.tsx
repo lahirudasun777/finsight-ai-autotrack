@@ -19,18 +19,20 @@ import { AlertCircle, Loader2, Mail, Lock, EyeOff, Eye, LogIn } from 'lucide-rea
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
 
 // Define form schema
 const formSchema = z.object({
-  email: z.string().email({ message: "Please enter a valid email address" }),
-  password: z.string().min(6, { message: "Password must be at least 6 characters" }),
+  email: z.string().min(1, { message: "Username or email is required" }),
+  password: z.string().min(1, { message: "Password is required" }),
   rememberMe: z.boolean().default(false),
 });
 
 const Login = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { login } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [loginError, setLoginError] = useState('');
@@ -50,27 +52,14 @@ const Login = () => {
       setIsLoading(true);
       setLoginError('');
       
-      // Simulate a login request (replace with actual auth implementation)
-      await new Promise(resolve => setTimeout(resolve, 1500));
+      const success = await login(values.email, values.password, values.rememberMe);
       
-      // For demo purposes, let's use a fixed email/password check
-      if (values.email === 'demo@finsight.com' && values.password === 'password123') {
-        // Successful login
-        toast({
-          title: "Login successful",
-          description: "Welcome back to FinSight!",
-        });
-        
-        // Save to localStorage if "Remember Me" is checked
-        if (values.rememberMe) {
-          localStorage.setItem('finsightUser', JSON.stringify({ email: values.email }));
-        }
-        
+      if (success) {
         // Redirect to dashboard
         navigate('/dashboard');
       } else {
         // Failed login
-        setLoginError('Invalid email or password');
+        setLoginError('Invalid username/email or password');
       }
     } catch (error) {
       setLoginError('An error occurred. Please try again.');
@@ -95,6 +84,12 @@ const Login = () => {
   const handleDemoLogin = () => {
     form.setValue('email', 'demo@finsight.com');
     form.setValue('password', 'password123');
+    form.setValue('rememberMe', true);
+  };
+
+  const handleSimpleLogin = () => {
+    form.setValue('email', 'user');
+    form.setValue('password', '123');
     form.setValue('rememberMe', true);
   };
 
@@ -134,15 +129,15 @@ const Login = () => {
                     name="email"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Email address</FormLabel>
+                        <FormLabel>Username or Email</FormLabel>
                         <FormControl>
                           <div className="relative">
                             <Mail className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
                             <Input
                               {...field}
-                              placeholder="you@example.com"
-                              type="email"
-                              autoComplete="email"
+                              placeholder="Username or email"
+                              type="text"
+                              autoComplete="username"
                               className="pl-9"
                               disabled={isLoading}
                             />
@@ -240,11 +235,11 @@ const Login = () => {
                   <div className="w-full border-t border-gray-300" />
                 </div>
                 <div className="relative flex justify-center text-sm">
-                  <span className="bg-gray-50 px-2 text-gray-500">Or continue with</span>
+                  <span className="bg-gray-50 px-2 text-gray-500">Quick login options</span>
                 </div>
               </div>
 
-              <div className="mt-6 grid grid-cols-2 gap-3">
+              <div className="mt-6 grid grid-cols-3 gap-3">
                 <Button
                   variant="outline"
                   type="button"
@@ -261,8 +256,22 @@ const Login = () => {
                   disabled={isLoading}
                   className="w-full"
                 >
-                  Demo Account
+                  Demo
                 </Button>
+                <Button
+                  variant="outline"
+                  type="button"
+                  onClick={handleSimpleLogin}
+                  disabled={isLoading}
+                  className="w-full"
+                >
+                  Simple
+                </Button>
+              </div>
+              
+              <div className="mt-4 text-xs text-center text-gray-500">
+                <p>Demo: demo@finsight.com / password123</p>
+                <p>Simple: user / 123</p>
               </div>
             </div>
           </div>
