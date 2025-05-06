@@ -2,7 +2,7 @@
 import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { ChartPie, Calendar, Wallet, LogOut, User, Settings } from 'lucide-react';
+import { ChartPie, Calendar, Wallet, LogOut, User, Settings, LogIn } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import {
   DropdownMenu,
@@ -21,6 +21,10 @@ const Navbar: React.FC = () => {
   const handleLogout = () => {
     logout();
     navigate('/');
+  };
+
+  const handleLogin = () => {
+    navigate('/login');
   };
 
   const getUserInitials = () => {
@@ -89,11 +93,16 @@ const Navbar: React.FC = () => {
             </DropdownMenu>
           ) : (
             <>
-              <Link to="/login">
-                <Button className="hidden md:inline-flex" variant="ghost">Log In</Button>
-              </Link>
-              <Link to="/register">
-                <Button>Get Started</Button>
+              <Button 
+                onClick={handleLogin} 
+                className="flex items-center gap-2"
+                variant="default"
+              >
+                <LogIn className="h-4 w-4" />
+                <span>Log In</span>
+              </Button>
+              <Link to="/register" className="hidden md:block">
+                <Button variant="outline">Get Started</Button>
               </Link>
             </>
           )}
